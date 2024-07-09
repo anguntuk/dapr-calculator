@@ -1,17 +1,13 @@
 package com.example.demo.Controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus; // Add this import
 
 import com.example.demo.Models.Calculator;
-
 import io.dapr.client.DaprClient;
 import io.dapr.client.DaprClientBuilder;
-import io.dapr.client.domain.State;
-import reactor.core.publisher.Mono;
 
 @Controller
 public class CalculatorController {
@@ -76,9 +72,10 @@ public class CalculatorController {
         return "base-layout";
     }
 
-    @PostMapping("/Calculator")
+    @PostMapping("/calculate")
     @ResponseBody
     public double calculate(@RequestBody Calculator calculator) {
+        System.out.println("Received request: " + calculator);
         double result = calculator.calculateResult();
         try {
             client.saveState(STATE_STORE_NAME, "lastResult", result).block();
@@ -93,27 +90,9 @@ public class CalculatorController {
     @GetMapping("/lastResult")
     @ResponseBody
     public double getLastResult() {
-        double lastResult = 0.0;
-        try {
-            DaprClient client = new DaprClientBuilder().build();
-            Mono<State<Double>> stateResponseMono = client.getState(STATE_STORE_NAME, "lastResult", Double.class);
-            State<Double> stateResponse = stateResponseMono.blockOptional().orElse(null);
-            
-            if (stateResponse != null) {
-                lastResult = stateResponse.getValue(); // Retrieve the actual value from stateResponse
-            } else {
-                System.err.println("No state found for key 'lastResult'");
-            }
-        } catch (Exception e) {
-            System.err.println("Error retrieving last result from state store: " + e.getMessage());
-            e.printStackTrace();
-        }
-        
-        return lastResult; // Return the retrieved lastResult (either actual value or default 0.0)
+        Double lastResult = client.getState(STATE_STORE_NAME, "lastResult", Double.class).block().getValue();
+        return lastResult != null ? lastResult : 0.0;
     }
-
-
-
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
