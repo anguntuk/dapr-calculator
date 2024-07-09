@@ -57,4 +57,4 @@ steps:
   inputs:
     script: |
         docker-compose down
-        docker rmi -f datarefresh:$(Build.BuildNumber)
+        docker rmi -f dapr:$(Build.BuildNumber)
