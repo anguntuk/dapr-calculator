@@ -31,3 +31,23 @@ steps:
       command: 'build'
       Dockerfile: '**/Dockerfile'
       arguments: '-t  dapr:$(Build.BuildNumber)'
+- task: ECRPushImage@1
+  displayName: Push to Jfrog Artifactory
+  inputs:
+      awsCredentials: 'AWSServiceConnection'
+      regionName: 'us-east-2'
+      imageSource: imagename
+      sourceImageName: 'dapr'
+      sourceImageTag: $(Build.BuildNumber)
+      pushTag: $(Build.BuildNumber)
+      repositoryName: 'dapr'
+- task: ECRPushImage@1
+  displayName: Push to Jfrog Artifactory
+  inputs:
+      awsCredentials: 'AWSServiceConnection'
+      regionName: 'us-east-2'
+      imageSource: imagename
+      sourceImageName: 'dapr'
+      sourceImageTag: $(Build.BuildNumber)
+      pushTag: latest
+      repositoryName: 'dapr'
