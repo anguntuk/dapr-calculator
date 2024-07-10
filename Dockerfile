@@ -14,7 +14,8 @@ RUN apt-get update && \
     curl -fsSL https://raw.githubusercontent.com/dapr/cli/master/install/install.sh | /bin/bash && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
- 
+    
+ENV PATH="$PATH:/usr/local/bin" 
 # Expose the Spring Boot port and Dapr ports
 EXPOSE 8080 3500 50001
  
