@@ -6,7 +6,7 @@ WORKDIR /app
  
 # Copy the Spring Boot jar file into the container
 COPY target/CalculatorSampleApp-0.0.1-SNAPSHOT.jar app.jar
-COPY components .
+COPY components /app/
  
 # Install curl and Dapr CLI
 RUN apt-get update && \
